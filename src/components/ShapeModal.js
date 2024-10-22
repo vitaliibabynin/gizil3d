@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -13,91 +13,91 @@ import {
   FormHelperText,
 } from '@mui/material';
 
+const SHAPE_TYPES = ['Sphere', 'Cylinder', 'Cube', 'Cone'];
+const MAX_NAME_LENGTH = 16;
+
 const ShapeModal = ({ open, onClose, onCreateShape }) => {
-  const [name, setName] = useState('');
-  const [type, setType] = useState('');
+  const [formData, setFormData] = useState({ name: '', type: '' });
   const [errors, setErrors] = useState({ name: '', type: '' });
   const nameInputRef = useRef(null);
 
   useEffect(() => {
     if (open) {
-      setName('');
-      setType('');
-      setErrors({ name: '', type: '' });
-      // Focus the name input when the modal opens
-      setTimeout(() => {
-        nameInputRef.current?.focus();
-      }, 0);
+      resetForm();
+      focusNameInput();
     }
   }, [open]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newErrors = { name: '', type: '' };
-
-    if (!name.trim()) {
-      newErrors.name = 'Name is required';
-    }
-    if (!type) {
-      newErrors.type = 'Shape type is required';
-    }
-
-    if (newErrors.name || newErrors.type) {
-      setErrors(newErrors);
-      return;
-    }
-
-    onCreateShape({ name, type });
-    handleClose();
-  };
-
-  const handleClose = () => {
-    setName('');
-    setType('');
+  const resetForm = useCallback(() => {
+    setFormData({ name: '', type: '' });
     setErrors({ name: '', type: '' });
-    onClose();
-  };
+  }, []);
 
-  const handleNameChange = (e) => {
-    const value = e.target.value.slice(0, 16); // Limit to 16 characters
-    setName(value);
-  };
+  const focusNameInput = useCallback(() => {
+    setTimeout(() => nameInputRef.current?.focus(), 0);
+  }, []);
+
+  const handleInputChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: name === 'name' ? value.slice(0, MAX_NAME_LENGTH) : value
+    }));
+  }, []);
+
+  const validateForm = useCallback(() => {
+    const newErrors = {
+      name: formData.name.trim() ? '' : 'Name is required',
+      type: formData.type ? '' : 'Shape type is required'
+    };
+    setErrors(newErrors);
+    return !Object.values(newErrors).some(error => error);
+  }, [formData]);
+
+  const handleSubmit = useCallback((e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      onCreateShape(formData);
+      onClose();
+    }
+  }, [formData, validateForm, onCreateShape, onClose]);
 
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle>Create New Shape</DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
+            name="name"
             label="Shape Name"
             type="text"
             fullWidth
-            value={name}
-            onChange={handleNameChange}
+            value={formData.name}
+            onChange={handleInputChange}
             error={!!errors.name}
-            helperText={errors.name || `${name.length}/16 characters`}
-            inputProps={{ maxLength: 16 }}
+            helperText={errors.name || `${formData.name.length}/${MAX_NAME_LENGTH} characters`}
+            inputProps={{ maxLength: MAX_NAME_LENGTH }}
             inputRef={nameInputRef}
           />
           <FormControl fullWidth margin="dense" error={!!errors.type}>
             <InputLabel>Shape Type</InputLabel>
             <Select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
+              name="type"
+              value={formData.type}
+              onChange={handleInputChange}
               label="Shape Type"
             >
-              <MenuItem value="Sphere">Sphere</MenuItem>
-              <MenuItem value="Cylinder">Cylinder</MenuItem>
-              <MenuItem value="Cube">Cube</MenuItem>
-              <MenuItem value="Cone">Cone</MenuItem>
+              {SHAPE_TYPES.map(type => (
+                <MenuItem key={type} value={type}>{type}</MenuItem>
+              ))}
             </Select>
             {errors.type && <FormHelperText>{errors.type}</FormHelperText>}
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={onClose}>Cancel</Button>
           <Button type="submit" variant="contained" color="primary">
             Create
           </Button>
