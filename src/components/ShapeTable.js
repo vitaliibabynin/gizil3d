@@ -108,7 +108,7 @@ const ShapeTable = () => {
           </div>
           <TableContainer component={Paper} className={isMobileOrTablet ? 'rounded-none' : ''}>
             <Table>
-              <TableHead>
+              <StyledTableHead>
                 <TableRow>
                   {isMobileOrTablet && <TableCell style={{ width: '48px', padding: '8px' }} />}
                   {!isMobileOrTablet && <TableCell>ID</TableCell>}
@@ -116,12 +116,14 @@ const ShapeTable = () => {
                   {!isMobileOrTablet && <TableCell>Shape Type</TableCell>}
                   {!isMobileOrTablet && <TableCell>Actions</TableCell>}
                 </TableRow>
-              </TableHead>
+              </StyledTableHead>
               <TableBody>
                 {shapes.map((shape, index) => (
                   <React.Fragment key={shape.id}>
-                    <TableRow 
+                    <StyledTableRow 
                       onClick={() => isMobileOrTablet && toggleRow(shape.id)}
+                      isEven={index % 2 === 0}
+                      isSelected={selectedRow === shape.id}
                     >
                       {isMobileOrTablet && (
                         <TableCell style={{ width: '48px', padding: '8px' }}>
@@ -166,7 +168,7 @@ const ShapeTable = () => {
                           </div>
                         </TableCell>
                       )}
-                    </TableRow>
+                    </StyledTableRow>
                     {isMobileOrTablet && (
                       <TableRow>
                         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
