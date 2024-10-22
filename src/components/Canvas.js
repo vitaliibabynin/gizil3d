@@ -22,13 +22,13 @@ const Canvas = ({ shapes, onClose }) => {
     const controls = new OrbitControls(camera, renderer.domElement);
 
     // Set up lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); // Increased intensity
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambientLight);
 
     const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
     scene.add(hemisphereLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8); // Increased intensity
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
     directionalLight.position.set(5, 10, 7);
     scene.add(directionalLight);
 
@@ -47,24 +47,24 @@ const Canvas = ({ shapes, onClose }) => {
     // Render shapes
     sortedShapes.forEach((shape, index) => {
       let geometry;
-      let yOffset = 0; // This will be used to position the bottom of the shape at y=0
+      let yOffset = 0;
 
       switch (shape.type) {
         case 'Sphere':
           geometry = new THREE.SphereGeometry(1, 32, 32);
-          yOffset = 1; // Radius of the sphere
+          yOffset = 1;
           break;
         case 'Cylinder':
           geometry = new THREE.CylinderGeometry(0.5, 0.5, 2, 32);
-          yOffset = 1; // Half of the cylinder's height
+          yOffset = 1;
           break;
         case 'Cube':
           geometry = new THREE.BoxGeometry(1, 1, 1);
-          yOffset = 0.5; // Half of the cube's height
+          yOffset = 0.5;
           break;
         case 'Cone':
           geometry = new THREE.ConeGeometry(0.5, 2, 32);
-          yOffset = 1; // Half of the cone's height
+          yOffset = 1;
           break;
         default:
           geometry = new THREE.BoxGeometry(1, 1, 1);

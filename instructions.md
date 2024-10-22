@@ -91,8 +91,8 @@ The project has been divided into a series of tasks to ensure a smooth and struc
 
 - **Description:** Allow users to render a specific shape from the table.
 - **Instructions:**
-  1. Add a "Render" button in each table row to render the specific shape in `Canvas.js`.
-  2. Update `Canvas.js` to accept a shape ID or record and render only that shape.
+  1. Use the "Render" button in each table row to render the specific shape in `Canvas.js`.
+  2. Update `Canvas.js` to accept a shape ID and render only that shape.
   3. Ensure that the same interactions (view, scale, position) are available as in the full rendering mode.
 - **Outcome:** Users can render and interact with individual shapes directly from the table.
 

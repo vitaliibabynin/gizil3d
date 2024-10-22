@@ -48,6 +48,7 @@ const ShapeTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [showCanvas, setShowCanvas] = useState(false);
+  const [selectedShapeId, setSelectedShapeId] = useState(null);
   const theme = useTheme();
   const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -70,11 +71,18 @@ const ShapeTable = () => {
   };
 
   const handleRenderAll = () => {
+    setSelectedShapeId(null);
+    setShowCanvas(true);
+  };
+
+  const handleRenderShape = (id) => {
+    setSelectedShapeId(id);
     setShowCanvas(true);
   };
 
   const handleCloseCanvas = () => {
     setShowCanvas(false);
+    setSelectedShapeId(null);
   };
 
   const toggleRow = (id) => {
@@ -84,7 +92,10 @@ const ShapeTable = () => {
   return (
     <div className={`${isMobileOrTablet ? 'p-0' : 'p-4'} flex justify-center`}>
       {showCanvas ? (
-        <Canvas shapes={shapes} onClose={handleCloseCanvas} />
+        <Canvas 
+          shapes={selectedShapeId ? shapes.filter(shape => shape.id === selectedShapeId) : shapes} 
+          onClose={handleCloseCanvas} 
+        />
       ) : (
         <div className={`w-full ${isMobileOrTablet ? 'max-w-full' : 'max-w-[1000px]'}`}>
           <div className={`mb-4 flex justify-between ${isMobileOrTablet ? 'px-0' : ''}`}>
@@ -97,7 +108,7 @@ const ShapeTable = () => {
           </div>
           <TableContainer component={Paper} className={isMobileOrTablet ? 'rounded-none' : ''}>
             <Table>
-              <StyledTableHead>
+              <TableHead>
                 <TableRow>
                   {isMobileOrTablet && <TableCell style={{ width: '48px', padding: '8px' }} />}
                   {!isMobileOrTablet && <TableCell>ID</TableCell>}
@@ -105,13 +116,11 @@ const ShapeTable = () => {
                   {!isMobileOrTablet && <TableCell>Shape Type</TableCell>}
                   {!isMobileOrTablet && <TableCell>Actions</TableCell>}
                 </TableRow>
-              </StyledTableHead>
+              </TableHead>
               <TableBody>
                 {shapes.map((shape, index) => (
                   <React.Fragment key={shape.id}>
-                    <StyledTableRow 
-                      isEven={index % 2 === 0}
-                      isSelected={isMobileOrTablet && selectedRow === shape.id}
+                    <TableRow 
                       onClick={() => isMobileOrTablet && toggleRow(shape.id)}
                     >
                       {isMobileOrTablet && (
@@ -157,16 +166,12 @@ const ShapeTable = () => {
                           </div>
                         </TableCell>
                       )}
-                    </StyledTableRow>
+                    </TableRow>
                     {isMobileOrTablet && (
                       <TableRow>
                         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                           <Collapse in={selectedRow === shape.id} timeout="auto" unmountOnExit>
-                            <Box sx={{ 
-                              padding: 2,
-                              border: selectedRow === shape.id ? `2px solid ${theme.palette.primary.main}` : 'none',
-                              borderTop: 'none',
-                            }}>
+                            <Box sx={{ padding: 2 }}>
                               <Table size="small" aria-label="details">
                                 <TableBody>
                                   <TableRow>
