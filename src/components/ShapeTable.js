@@ -18,6 +18,7 @@ import {
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ShapeModal from './ShapeModal';
+import { getShapes, saveShapes, deleteShape } from '../utils/storage';
 
 // Styled components for custom table elements
 const StyledTableHead = styled(TableHead)(({ theme }) => ({
@@ -50,20 +51,19 @@ const ShapeTable = () => {
 
   useEffect(() => {
     // Load shapes from local storage when component mounts
-    const storedShapes = JSON.parse(localStorage.getItem('shapes') || '[]');
-    setShapes(storedShapes);
+    setShapes(getShapes());
   }, []);
 
   const handleCreateShape = (newShape) => {
     const updatedShapes = [...shapes, { ...newShape, id: Date.now() }];
     setShapes(updatedShapes);
-    localStorage.setItem('shapes', JSON.stringify(updatedShapes));
+    saveShapes(updatedShapes);
   };
 
   const handleDeleteShape = (id) => {
     const updatedShapes = shapes.filter(shape => shape.id !== id);
     setShapes(updatedShapes);
-    localStorage.setItem('shapes', JSON.stringify(updatedShapes));
+    deleteShape(id);
     if (selectedRow === id) setSelectedRow(null);
   };
 
@@ -82,9 +82,9 @@ const ShapeTable = () => {
   };
 
   return (
-    <div className="p-4 flex justify-center">
-      <div className="w-full max-w-[1000px]">
-        <div className="mb-4 flex justify-between">
+    <div className={`${isMobileOrTablet ? 'p-0' : 'p-4'} flex justify-center`}>
+      <div className={`w-full ${isMobileOrTablet ? 'max-w-full' : 'max-w-[1000px]'}`}>
+        <div className={`mb-4 flex justify-between ${isMobileOrTablet ? 'px-0' : ''}`}>
           <Button variant="contained" color="primary" onClick={() => setIsModalOpen(true)}>
             Create Shape
           </Button>
@@ -92,14 +92,14 @@ const ShapeTable = () => {
             Render All
           </Button>
         </div>
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} className={isMobileOrTablet ? 'rounded-none' : ''}>
           <Table>
             <StyledTableHead>
               <TableRow>
-                {isMobileOrTablet && <TableCell />}
+                {isMobileOrTablet && <TableCell style={{ width: '48px', padding: '8px' }} />}
                 {!isMobileOrTablet && <TableCell>ID</TableCell>}
                 <TableCell>Name</TableCell>
-                <TableCell>Shape Type</TableCell>
+                {!isMobileOrTablet && <TableCell>Shape Type</TableCell>}
                 {!isMobileOrTablet && <TableCell>Actions</TableCell>}
               </TableRow>
             </StyledTableHead>
@@ -112,7 +112,7 @@ const ShapeTable = () => {
                     onClick={() => isMobileOrTablet && toggleRow(shape.id)}
                   >
                     {isMobileOrTablet && (
-                      <TableCell>
+                      <TableCell style={{ width: '48px', padding: '8px' }}>
                         <IconButton
                           aria-label="expand row"
                           size="small"
@@ -127,7 +127,7 @@ const ShapeTable = () => {
                     )}
                     {!isMobileOrTablet && <TableCell>{shape.id}</TableCell>}
                     <TableCell>{shape.name}</TableCell>
-                    <TableCell>{shape.type}</TableCell>
+                    {!isMobileOrTablet && <TableCell>{shape.type}</TableCell>}
                     {!isMobileOrTablet && (
                       <TableCell>
                         <div className="flex space-x-2">
@@ -171,23 +171,30 @@ const ShapeTable = () => {
                                   <TableCell>{shape.id}</TableCell>
                                 </TableRow>
                                 <TableRow>
+                                  <TableCell component="th" scope="row">Shape Type:</TableCell>
+                                  <TableCell>{shape.type}</TableCell>
+                                </TableRow>
+                                <TableRow>
                                   <TableCell component="th" scope="row">Actions:</TableCell>
-                                  <TableCell className="flex space-x-2">
-                                    <Button 
-                                      variant="outlined" 
-                                      color="error" 
-                                      onClick={() => handleDeleteShape(shape.id)}
-                                      className="mr-2"
-                                    >
-                                      Delete
-                                    </Button>
-                                    <Button 
-                                      variant="outlined" 
-                                      color="primary" 
-                                      onClick={() => handleRenderShape(shape.id)}
-                                    >
-                                      Render
-                                    </Button>
+                                  <TableCell>
+                                    <div className="flex flex-col space-y-2">
+                                      <Button 
+                                        variant="outlined" 
+                                        color="error" 
+                                        onClick={() => handleDeleteShape(shape.id)}
+                                        fullWidth
+                                      >
+                                        Delete
+                                      </Button>
+                                      <Button 
+                                        variant="outlined" 
+                                        color="primary" 
+                                        onClick={() => handleRenderShape(shape.id)}
+                                        fullWidth
+                                      >
+                                        Render
+                                      </Button>
+                                    </div>
                                   </TableCell>
                                 </TableRow>
                               </TableBody>

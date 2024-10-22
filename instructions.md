@@ -69,7 +69,7 @@ The project has been divided into a series of tasks to ensure a smooth and struc
 - **Description:** Ensure shape records are saved and loaded from local storage.
 - **Instructions:**
   1. Create utility functions in a `storage.js` file to handle saving, retrieving, and deleting shape records from local storage.
-  2. Use these utility functions in `Table.js` to load existing shapes when the app starts.
+  2. Use these utility functions in `ShapeTable.js` to load existing shapes when the app starts.
   3. Update the local storage whenever a shape is added or deleted.
 - **Outcome:** Shape records persist between browser sessions, with data saved and retrieved from local storage.
 

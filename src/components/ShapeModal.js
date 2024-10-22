@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -17,6 +17,19 @@ const ShapeModal = ({ open, onClose, onCreateShape }) => {
   const [name, setName] = useState('');
   const [type, setType] = useState('');
   const [errors, setErrors] = useState({ name: '', type: '' });
+  const nameInputRef = useRef(null);
+
+  useEffect(() => {
+    if (open) {
+      setName('');
+      setType('');
+      setErrors({ name: '', type: '' });
+      // Focus the name input when the modal opens
+      setTimeout(() => {
+        nameInputRef.current?.focus();
+      }, 0);
+    }
+  }, [open]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -66,6 +79,7 @@ const ShapeModal = ({ open, onClose, onCreateShape }) => {
             error={!!errors.name}
             helperText={errors.name || `${name.length}/16 characters`}
             inputProps={{ maxLength: 16 }}
+            inputRef={nameInputRef}
           />
           <FormControl fullWidth margin="dense" error={!!errors.type}>
             <InputLabel>Shape Type</InputLabel>
