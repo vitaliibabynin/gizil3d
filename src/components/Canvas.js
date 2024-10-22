@@ -4,12 +4,17 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 const Canvas = ({ shapes, onClose }) => {
   const mountRef = useRef(null);
+  const sceneRef = useRef(null);
+  const rendererRef = useRef(null);
 
   useEffect(() => {
     // Set up scene, camera, and renderer
     const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf0f0f0); // Light gray background
+    sceneRef.current = scene;
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer();
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    rendererRef.current = renderer;
     renderer.setSize(window.innerWidth, window.innerHeight);
     mountRef.current.appendChild(renderer.domElement);
 
@@ -17,39 +22,71 @@ const Canvas = ({ shapes, onClose }) => {
     const controls = new OrbitControls(camera, renderer.domElement);
 
     // Set up lighting
-    const ambientLight = new THREE.AmbientLight(0x404040);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); // Increased intensity
     scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    directionalLight.position.set(1, 1, 1);
+
+    const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
+    scene.add(hemisphereLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8); // Increased intensity
+    directionalLight.position.set(5, 10, 7);
     scene.add(directionalLight);
 
     // Position camera
-    camera.position.z = 5;
+    camera.position.z = 10;
+    camera.position.y = 5;
+    camera.lookAt(0, 0, 0);
+
+    // Sort shapes by ID
+    const sortedShapes = [...shapes].sort((a, b) => a.id - b.id);
+
+    // Calculate total width of all shapes
+    const spacing = 2.5; // Space between shapes
+    const totalWidth = (sortedShapes.length - 1) * spacing;
 
     // Render shapes
-    shapes.forEach((shape) => {
+    sortedShapes.forEach((shape, index) => {
       let geometry;
+      let yOffset = 0; // This will be used to position the bottom of the shape at y=0
+
       switch (shape.type) {
         case 'Sphere':
           geometry = new THREE.SphereGeometry(1, 32, 32);
+          yOffset = 1; // Radius of the sphere
           break;
         case 'Cylinder':
-          geometry = new THREE.CylinderGeometry(1, 1, 2, 32);
+          geometry = new THREE.CylinderGeometry(0.5, 0.5, 2, 32);
+          yOffset = 1; // Half of the cylinder's height
           break;
         case 'Cube':
           geometry = new THREE.BoxGeometry(1, 1, 1);
+          yOffset = 0.5; // Half of the cube's height
           break;
         case 'Cone':
-          geometry = new THREE.ConeGeometry(1, 2, 32);
+          geometry = new THREE.ConeGeometry(0.5, 2, 32);
+          yOffset = 1; // Half of the cone's height
           break;
         default:
           geometry = new THREE.BoxGeometry(1, 1, 1);
+          yOffset = 0.5;
       }
-      const material = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
+
+      const material = new THREE.MeshStandardMaterial({ 
+        color: Math.random() * 0xffffff,
+        metalness: 0.1,
+        roughness: 0.5
+      });
       const mesh = new THREE.Mesh(geometry, material);
-      mesh.position.set(Math.random() * 4 - 2, Math.random() * 4 - 2, Math.random() * 4 - 2);
+      
+      // Position shapes along x-axis and set bottom to y=0
+      mesh.position.set(index * spacing - totalWidth / 2, yOffset, 0);
+      
       scene.add(mesh);
     });
+
+    // Add a grid helper to visualize the ground plane
+    const gridHelper = new THREE.GridHelper(20, 20, 0x888888, 0x888888);
+    scene.add(gridHelper);
 
     // Animation loop
     const animate = () => {
@@ -70,7 +107,15 @@ const Canvas = ({ shapes, onClose }) => {
     // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
-      mountRef.current.removeChild(renderer.domElement);
+      if (mountRef.current && rendererRef.current) {
+        mountRef.current.removeChild(rendererRef.current.domElement);
+      }
+      if (sceneRef.current) {
+        sceneRef.current.clear();
+      }
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+      }
     };
   }, [shapes]);
 
