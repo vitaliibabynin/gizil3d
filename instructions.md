@@ -32,11 +32,16 @@ The project has been divided into a series of tasks to ensure a smooth and struc
 
 - **Description:** Develop a table to display shape records and include buttons for creating and rendering shapes.
 - **Instructions:**
-  1. Create a `Table.js` component that displays shape records with columns like *Name* and *Actions*.
+  1. Create a `ShapeTable.js` component that displays shape records with the following columns:
+     ID, Name, Shape Type, Actions
   2. Add a "Create" button above the table that will open a modal for adding new shapes.
   3. Add a "Render All" button above the table that will render all shapes on a canvas.
-  4. Add a "Delete" button in each row to remove a shape record.
-- **Outcome:** A table displaying shape records with controls for adding, deleting, and rendering shapes.
+  4. Add a "Render" button in each row in the action column to render a shape on a canvas.
+  5. Add a "Delete" button in each row in the action column, to the left of render, to remove a shape record.
+  6. Implement the delete functionality to remove a shape from the table and local storage.
+  7. Use Material-UI components for the table and buttons.
+  8. Style the component using Tailwind CSS classes for spacing and layout.
+- **Outcome:** A table displaying shape records with controls for adding, deleting, and rendering shapes, styled with Material-UI and Tailwind CSS.
 
 ---
 
@@ -45,8 +50,14 @@ The project has been divided into a series of tasks to ensure a smooth and struc
 - **Description:** Implement a modal that allows users to input shape details and create a new shape record.
 - **Instructions:**
   1. Create a `Modal.js` component using Material UI's dialog components.
-  2. Add form fields for shape attributes like *Name*, *Width*, *Height*, and *Depth*.
-  3. Validate user inputs (e.g., positive numbers for dimensions).
+  2. Add form fields for shape attributes:
+  Name,
+  A selectable Shape Type:
+  - Sphere
+  - Cylinder
+  - Cube
+  - Cone
+  3. Validate user inputs (make sure shape is selected and name is not empty). Visually show errors by highlighting the fields in red, and writing an error message below the input field.
   4. Store the new shape record in local storage upon submission.
   5. Refresh the table with the updated list of shapes after submission.
 - **Outcome:** A functional modal that allows users to add new shape records, with data stored in local storage.
