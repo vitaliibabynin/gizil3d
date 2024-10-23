@@ -21,13 +21,6 @@ const ShapeModal = ({ open, onClose, onCreateShape }) => {
   const [errors, setErrors] = useState({ name: '', type: '' });
   const nameInputRef = useRef(null);
 
-  useEffect(() => {
-    if (open) {
-      resetForm();
-      focusNameInput();
-    }
-  }, [open]);
-
   const resetForm = useCallback(() => {
     setFormData({ name: '', type: '' });
     setErrors({ name: '', type: '' });
@@ -36,6 +29,13 @@ const ShapeModal = ({ open, onClose, onCreateShape }) => {
   const focusNameInput = useCallback(() => {
     setTimeout(() => nameInputRef.current?.focus(), 0);
   }, []);
+
+  useEffect(() => {
+    if (open) {
+      resetForm();
+      focusNameInput();
+    }
+  }, [open, resetForm, focusNameInput]);
 
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
