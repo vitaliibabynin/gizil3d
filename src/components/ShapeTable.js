@@ -112,6 +112,115 @@ const ShapeTable = () => {
     </Button>
   );
 
+  const renderMobileTable = () => (
+    <TableContainer component={Paper} className="rounded-none">
+      <Table>
+        <StyledTableHead>
+          <TableRow>
+            <TableCell style={{ width: '48px', padding: '8px' }} />
+            <TableCell>Name</TableCell>
+          </TableRow>
+        </StyledTableHead>
+        <TableBody>
+          {shapes.map((shape, index) => (
+            <React.Fragment key={shape.id}>
+              <StyledTableRow 
+                onClick={() => toggleRow(shape.id)}
+                isEven={index % 2 === 0}
+                isSelected={selectedRow === shape.id}
+              >
+                <TableCell style={{ width: '48px', padding: '8px' }}>
+                  <IconButton
+                    aria-label="expand row"
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleRow(shape.id);
+                    }}
+                  >
+                    {selectedRow === shape.id ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                  </IconButton>
+                </TableCell>
+                <TableCell>{shape.name}</TableCell>
+              </StyledTableRow>
+              <TableRow>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                  <Collapse in={selectedRow === shape.id} timeout="auto" unmountOnExit>
+                    <Box sx={{ padding: 2 }}>
+                      <Table size="small" aria-label="details">
+                        <TableBody>
+                          <TableRow>
+                            <TableCell component="th" scope="row">ID:</TableCell>
+                            <TableCell>{shape.id}</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell component="th" scope="row">Shape Type:</TableCell>
+                            <TableCell>{shape.type}</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell component="th" scope="row">Actions:</TableCell>
+                            <TableCell>
+                              <div className="flex flex-col space-y-2">
+                                <DeleteButton onClick={() => handleDeleteShape(shape.id)}>
+                                  Delete
+                                </DeleteButton>
+                                <RenderButton onClick={() => handleRenderShape(shape.id)}>
+                                  Render
+                                </RenderButton>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </Box>
+                  </Collapse>
+                </TableCell>
+              </TableRow>
+            </React.Fragment>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+
+  const renderDesktopTable = () => (
+    <TableContainer component={Paper}>
+      <Table>
+        <StyledTableHead>
+          <TableRow>
+            <TableCell>ID</TableCell>
+            <TableCell>Name</TableCell>
+            <TableCell>Shape Type</TableCell>
+            <TableCell>Actions</TableCell>
+          </TableRow>
+        </StyledTableHead>
+        <TableBody>
+          {shapes.map((shape, index) => (
+            <StyledTableRow 
+              key={shape.id}
+              isEven={index % 2 === 0}
+              isSelected={selectedRow === shape.id}
+            >
+              <TableCell>{shape.id}</TableCell>
+              <TableCell>{shape.name}</TableCell>
+              <TableCell>{shape.type}</TableCell>
+              <TableCell>
+                <div className="flex space-x-2">
+                  <DeleteButton onClick={() => handleDeleteShape(shape.id)}>
+                    Delete
+                  </DeleteButton>
+                  <RenderButton onClick={() => handleRenderShape(shape.id)}>
+                    Render
+                  </RenderButton>
+                </div>
+              </TableCell>
+            </StyledTableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+
   return (
     <div className={`${isMobileOrTablet ? 'p-0' : 'p-4'} flex justify-center`}>
       {showCanvas ? (
@@ -129,87 +238,7 @@ const ShapeTable = () => {
               Render All
             </Button>
           </div>
-          <TableContainer component={Paper} className={isMobileOrTablet ? 'rounded-none' : ''}>
-            <Table>
-              <StyledTableHead>
-                <TableRow>
-                  {isMobileOrTablet && <TableCell style={{ width: '48px', padding: '8px' }} />}
-                  {!isMobileOrTablet && <TableCell>ID</TableCell>}
-                  <TableCell>Name</TableCell>
-                  {!isMobileOrTablet && <TableCell>Shape Type</TableCell>}
-                  {!isMobileOrTablet && <TableCell>Actions</TableCell>}
-                </TableRow>
-              </StyledTableHead>
-              <TableBody>
-                {shapes.map((shape, index) => (
-                  <React.Fragment key={shape.id}>
-                    <StyledTableRow 
-                      onClick={() => isMobileOrTablet && toggleRow(shape.id)}
-                      isEven={index % 2 === 0}
-                      isSelected={selectedRow === shape.id}
-                    >
-                      {isMobileOrTablet && (
-                        <TableCell style={{ width: '48px', padding: '8px' }}>
-                          <IconButton
-                            aria-label="expand row"
-                            size="small"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleRow(shape.id);
-                            }}
-                          >
-                            {selectedRow === shape.id ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                          </IconButton>
-                        </TableCell>
-                      )}
-                      {!isMobileOrTablet && <TableCell>{shape.id}</TableCell>}
-                      <TableCell>{shape.name}</TableCell>
-                      {!isMobileOrTablet && <TableCell>{shape.type}</TableCell>}
-                      {!isMobileOrTablet && (
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <DeleteButton onClick={() => handleDeleteShape(shape.id)}>Delete</DeleteButton>
-                            <RenderButton onClick={() => handleRenderShape(shape.id)}>Render</RenderButton>
-                          </div>
-                        </TableCell>
-                      )}
-                    </StyledTableRow>
-                    {isMobileOrTablet && (
-                      <TableRow>
-                        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                          <Collapse in={selectedRow === shape.id} timeout="auto" unmountOnExit>
-                            <Box sx={{ padding: 2 }}>
-                              <Table size="small" aria-label="details">
-                                <TableBody>
-                                  <TableRow>
-                                    <TableCell component="th" scope="row">ID:</TableCell>
-                                    <TableCell>{shape.id}</TableCell>
-                                  </TableRow>
-                                  <TableRow>
-                                    <TableCell component="th" scope="row">Shape Type:</TableCell>
-                                    <TableCell>{shape.type}</TableCell>
-                                  </TableRow>
-                                  <TableRow>
-                                    <TableCell component="th" scope="row">Actions:</TableCell>
-                                    <TableCell>
-                                      <div className="flex flex-col space-y-2">
-                                        <DeleteButton onClick={() => handleDeleteShape(shape.id)}>Delete</DeleteButton>
-                                        <RenderButton onClick={() => handleRenderShape(shape.id)}>Render</RenderButton>
-                                      </div>
-                                    </TableCell>
-                                  </TableRow>
-                                </TableBody>
-                              </Table>
-                            </Box>
-                          </Collapse>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </React.Fragment>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          {isMobileOrTablet ? renderMobileTable() : renderDesktopTable()}
           <ShapeModal
             open={isModalOpen}
             onClose={() => setIsModalOpen(false)}
