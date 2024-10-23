@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
@@ -6,6 +6,7 @@ const Canvas = ({ shapes, onClose }) => {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const rendererRef = useRef(null);
+  const [selectedShape, setSelectedShape] = useState(null);
 
   useEffect(() => {
     // Set up scene, camera, and renderer
@@ -15,7 +16,7 @@ const Canvas = ({ shapes, onClose }) => {
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     rendererRef.current = renderer;
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(window.innerWidth, window.innerHeight - 60); // Adjust for banner height
     mountRef.current.appendChild(renderer.domElement);
 
     // Add orbit controls
@@ -81,12 +82,49 @@ const Canvas = ({ shapes, onClose }) => {
       // Position shapes along x-axis and set bottom to y=0
       mesh.position.set(index * spacing - totalWidth / 2, yOffset, 0);
       
+      // Add shape data to the mesh's userData
+      mesh.userData = shape;
+
+      // Create a bounding box for the mesh
+      const box = new THREE.Box3().setFromObject(mesh);
+      const boxHelper = new THREE.Box3Helper(box, 0xffff00);
+      boxHelper.visible = false; // Make the helper invisible
+      boxHelper.userData = shape; // Add shape data to the boxHelper's userData
+
       scene.add(mesh);
+      scene.add(boxHelper);
     });
 
     // Add a grid helper to visualize the ground plane
     const gridHelper = new THREE.GridHelper(20, 20, 0x888888, 0x888888);
     scene.add(gridHelper);
+
+    // Add click event listener
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    const onMouseClick = (event) => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+
+      // Intersect with all objects, including bounding boxes
+      const intersects = raycaster.intersectObjects(scene.children, true);
+
+      if (intersects.length > 0) {
+        // Find the first intersected object that has userData
+        const clickedObject = intersects.find(intersect => intersect.object.userData && intersect.object.userData.name);
+        if (clickedObject) {
+          setSelectedShape(clickedObject.object.userData);
+        }
+      } else {
+        setSelectedShape(null);
+      }
+    };
+
+    renderer.domElement.addEventListener('click', onMouseClick);
 
     // Animation loop
     const animate = () => {
@@ -98,14 +136,15 @@ const Canvas = ({ shapes, onClose }) => {
 
     // Handle window resize
     const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.aspect = window.innerWidth / (window.innerHeight - 60); // Adjust for banner height
       camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setSize(window.innerWidth, window.innerHeight - 60); // Adjust for banner height
     };
     window.addEventListener('resize', handleResize);
 
     // Cleanup
     return () => {
+      renderer.domElement.removeEventListener('click', onMouseClick);
       window.removeEventListener('resize', handleResize);
       if (mountRef.current && rendererRef.current) {
         mountRef.current.removeChild(rendererRef.current.domElement);
@@ -120,10 +159,16 @@ const Canvas = ({ shapes, onClose }) => {
   }, [shapes]);
 
   return (
-    <div ref={mountRef} className="fixed inset-0 z-10">
+    <div className="fixed inset-0 z-10 flex flex-col">
+      <div className="h-[60px] bg-white shadow-md">
+        <div className="flex justify-center items-center h-full text-2xl font-bold">
+          {selectedShape ? selectedShape.name : "Click on 3D Shape to control it"}
+        </div>
+      </div>
+      <div ref={mountRef} className="flex-grow"></div>
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded"
+        className="absolute top-[70px] right-4 bg-red-500 text-white px-4 py-2 rounded"
       >
         Close
       </button>
