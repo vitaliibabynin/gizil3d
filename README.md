@@ -1,70 +1,87 @@
-# Getting Started with Create React App
+# 3D Shape Visualization and Control App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a web application that allows users to create, view, and manipulate 3D shapes through a user-friendly interface using React, Three.js, and Material UI.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- Create and manage 3D shapes (Sphere, Cylinder, Cube, Cone)
+- View shapes in a table format
+- Render shapes in a 3D canvas
+- Interact with shapes (resize, move) in the 3D environment
+- Responsive design for various screen sizes
 
-### `npm start`
+## View online on Vercel
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+[3D Shape Visualization and Control App](https://gizil3d.vercel.app/)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Prerequisites for running the application locally
 
-### `npm test`
+Before you begin, ensure you have met the following requirements:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Node.js (v14.0.0 or later)
+- npm (v6.0.0 or later)
 
-### `npm run build`
+## Installation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Clone the repository:
+   ```
+   git clone https://github.com/vitaliibabynin/gizil3d.git
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. Navigate to the project directory:
+   ```
+   cd gizil3d
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+3. Install the dependencies:
+   ```
+   npm install
+   ```
 
-### `npm run eject`
+## Running the Application Locally
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+To run the application in development mode:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. Start the development server:
+   ```
+   npm start
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+2. Open your browser and visit `http://localhost:3000`
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+The page will reload if you make edits, and you will see any lint errors in the console.
 
-## Learn More
+## Building for Production
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+To build the app for production:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. Create a production build:
+   ```
+   npm run build
+   ```
 
-### Code Splitting
+This builds the app for production to the `build` folder. It correctly bundles React in production mode and optimizes the build for the best performance.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Deployment
 
-### Analyzing the Bundle Size
+After building the app, you can deploy it to a static hosting service. Here are a few options:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+1. **Vercel**: 
+   - Install Vercel CLI: `npm i -g vercel`
+   - Run `vercel` in the project directory
 
-### Making a Progressive Web App
+2. **Netlify**:
+   - Install Netlify CLI: `npm install netlify-cli -g`
+   - Run `netlify deploy` in the project directory
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Additional Notes for Reviewers
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- The application uses local storage to persist shape data between sessions.
+- The 3D rendering is handled by Three.js, which may have performance implications on lower-end devices.
+- The UI is responsive, but for the best experience with the 3D canvas, a larger screen is recommended.
+- Future improvements could include:
+  - Adding more complex shape types
+  - Implementing ability to save, new shape size and position, after user interactions
+  - Adding dark mode toggle
+  - Adding the ability to export/import shape data
+  - Optimizing 3D rendering for better performance on mobile devices
