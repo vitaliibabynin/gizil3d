@@ -4,17 +4,21 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { DragControls } from 'three/examples/jsm/controls/DragControls';
 import { TextField, Typography } from '@mui/material';
 
+// The Canvas component is responsible for rendering and managing the 3D scene
 const Canvas = ({ shapes, onClose }) => {
-  const mountRef = useRef(null);
-  const sceneRef = useRef(null);
-  const rendererRef = useRef(null);
+  // Refs for managing Three.js objects and DOM elements
+  const mountRef = useRef(null);  // Ref for the DOM element where the canvas will be mounted
+  const sceneRef = useRef(null);  // Ref for the Three.js scene
+  const rendererRef = useRef(null);  // Ref for the Three.js renderer
+  const orbitControlsRef = useRef(null);  // Ref for OrbitControls
+  const dragControlsRef = useRef(null);  // Ref for DragControls
+  const objectsRef = useRef([]);  // Ref for storing the 3D objects in the scene
+  const raycasterRef = useRef(new THREE.Raycaster());  // Ref for the raycaster used in object selection
+  const mouseRef = useRef(new THREE.Vector2());  // Ref for storing mouse coordinates
+
+  // State for managing selected shape and its size
   const [selectedShape, setSelectedShape] = useState(null);
   const [shapeSize, setShapeSize] = useState(1);
-  const orbitControlsRef = useRef(null);
-  const dragControlsRef = useRef(null);
-  const objectsRef = useRef([]);
-  const raycasterRef = useRef(new THREE.Raycaster());
-  const mouseRef = useRef(new THREE.Vector2());
 
   /**
    * Initializes the Three.js scene, camera, and renderer.
@@ -56,26 +60,34 @@ const Canvas = ({ shapes, onClose }) => {
    * @returns {Array} An array of Three.js Mesh objects representing the created shapes.
    */
   const createShapes = useCallback((shapes, scene) => {
+    // Sort shapes by ID to ensure consistent ordering
     const sortedShapes = [...shapes].sort((a, b) => a.id - b.id);
-    const spacing = 2.5;
+    const spacing = 2.5;  // Space between shapes
     const totalWidth = (sortedShapes.length - 1) * spacing;
 
     objectsRef.current = sortedShapes.map((shape, index) => {
+      // Get the appropriate geometry and vertical offset for the shape type
       const { geometry, yOffset } = getShapeGeometry(shape.type);
+      
+      // Create a material with a random color
       const material = new THREE.MeshStandardMaterial({ 
         color: Math.random() * 0xffffff,
         metalness: 0.1,
         roughness: 0.5
       });
+      
+      // Create the mesh (3D object) with the geometry and material
       const mesh = new THREE.Mesh(geometry, material);
       
+      // Position the mesh in the scene
       mesh.position.set(index * spacing - totalWidth / 2, yOffset, 0);
-      mesh.userData = shape;
+      mesh.userData = shape;  // Store the shape data in the mesh's userData
 
       scene.add(mesh);
       return mesh;
     });
 
+    // Add a grid to the scene for better spatial reference
     const gridHelper = new THREE.GridHelper(20, 20, 0x888888, 0x888888);
     scene.add(gridHelper);
 
@@ -271,6 +283,7 @@ const Canvas = ({ shapes, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-10 flex flex-col">
+      {/* Header section with shape information and size control */}
       <div className="h-[120px] bg-white shadow-md flex flex-col justify-center items-center px-4">
         <div className="text-2xl font-bold mb-2">
           {selectedShape ? selectedShape.name : "Click on a 3D Shape to select it"}
@@ -298,7 +311,9 @@ const Canvas = ({ shapes, onClose }) => {
           </Typography>
         )}
       </div>
+      {/* The div where the Three.js scene will be mounted */}
       <div ref={mountRef} className="flex-grow"></div>
+      {/* Close button to exit the 3D view */}
       <button
         onClick={onClose}
         className="absolute top-[130px] right-4 bg-red-500 text-white px-4 py-2 rounded"

@@ -7,6 +7,7 @@ const SHAPES_STORAGE_KEY = 'shapes';
  */
 export const saveShapes = (shapes) => {
   try {
+    // Convert the shapes array to a JSON string and store it in localStorage
     localStorage.setItem(SHAPES_STORAGE_KEY, JSON.stringify(shapes));
   } catch (error) {
     console.error('Error saving shapes to localStorage:', error);
@@ -20,6 +21,7 @@ export const saveShapes = (shapes) => {
  */
 export const getShapes = () => {
   try {
+    // Retrieve the JSON string from localStorage and parse it back into an array
     const shapes = localStorage.getItem(SHAPES_STORAGE_KEY);
     return shapes ? JSON.parse(shapes) : [];
   } catch (error) {
@@ -34,6 +36,7 @@ export const getShapes = () => {
  * @param {Object} shape - The new shape object to be added.
  */
 export const addShape = (shape) => {
+  // Get the current shapes, add the new shape, and save the updated array
   const shapes = getShapes();
   shapes.push(shape);
   saveShapes(shapes);
@@ -45,6 +48,7 @@ export const addShape = (shape) => {
  * @param {number} id - The ID of the shape to be deleted.
  */
 export const deleteShape = (id) => {
+  // Get the current shapes, filter out the shape with the given ID, and save the updated array
   const shapes = getShapes();
   const updatedShapes = shapes.filter(shape => shape.id !== id);
   saveShapes(updatedShapes);

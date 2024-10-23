@@ -44,11 +44,14 @@ const StyledTableRow = styled(TableRow)(({ theme, isEven, isSelected }) => ({
 }));
 
 const ShapeTable = () => {
+  // State for managing shapes, modal visibility, selected row, and canvas visibility
   const [shapes, setShapes] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [showCanvas, setShowCanvas] = useState(false);
   const [selectedShapeId, setSelectedShapeId] = useState(null);
+  
+  // Theme and responsive design hooks
   const theme = useTheme();
   const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -276,12 +279,15 @@ const ShapeTable = () => {
   return (
     <div className={`${isMobileOrTablet ? 'p-0' : 'p-4'} flex justify-center`}>
       {showCanvas ? (
+        // Render the 3D canvas when showCanvas is true
         <Canvas 
           shapes={selectedShapeId ? shapes.filter(shape => shape.id === selectedShapeId) : shapes} 
           onClose={handleCloseCanvas} 
         />
       ) : (
+        // Render the shape table when showCanvas is false
         <div className={`w-full ${isMobileOrTablet ? 'max-w-full' : 'max-w-[1000px]'}`}>
+          {/* Buttons for creating shapes and rendering all shapes */}
           <div className={`mb-4 flex justify-between ${isMobileOrTablet ? 'px-0' : ''}`}>
             <Button variant="contained" color="primary" onClick={() => setIsModalOpen(true)}>
               Create Shape
@@ -290,7 +296,9 @@ const ShapeTable = () => {
               Render All
             </Button>
           </div>
+          {/* Render either mobile or desktop table based on screen size */}
           {isMobileOrTablet ? renderMobileTable() : renderDesktopTable()}
+          {/* Shape creation modal */}
           <ShapeModal
             open={isModalOpen}
             onClose={() => setIsModalOpen(false)}

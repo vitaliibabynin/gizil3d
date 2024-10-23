@@ -13,12 +13,17 @@ import {
   FormHelperText,
 } from '@mui/material';
 
+// Define the available shape types and maximum name length
 const SHAPE_TYPES = ['Sphere', 'Cylinder', 'Cube', 'Cone'];
 const MAX_NAME_LENGTH = 16;
 
+// ShapeModal component for creating new shapes
 const ShapeModal = ({ open, onClose, onCreateShape }) => {
+  // State for form data and validation errors
   const [formData, setFormData] = useState({ name: '', type: '' });
   const [errors, setErrors] = useState({ name: '', type: '' });
+  
+  // Ref for the name input field to allow focus on modal open
   const nameInputRef = useRef(null);
 
   /**
@@ -58,6 +63,7 @@ const ShapeModal = ({ open, onClose, onCreateShape }) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
+      // Limit the name length to MAX_NAME_LENGTH
       [name]: name === 'name' ? value.slice(0, MAX_NAME_LENGTH) : value
     }));
   }, []);
@@ -94,6 +100,7 @@ const ShapeModal = ({ open, onClose, onCreateShape }) => {
       <DialogTitle>Create New Shape</DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
+          {/* Name input field */}
           <TextField
             autoFocus
             margin="dense"
@@ -108,6 +115,7 @@ const ShapeModal = ({ open, onClose, onCreateShape }) => {
             inputProps={{ maxLength: MAX_NAME_LENGTH }}
             inputRef={nameInputRef}
           />
+          {/* Shape type selection dropdown */}
           <FormControl fullWidth margin="dense" error={!!errors.type}>
             <InputLabel>Shape Type</InputLabel>
             <Select
