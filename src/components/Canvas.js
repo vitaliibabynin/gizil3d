@@ -9,6 +9,8 @@ const Canvas = ({ shapes, onClose }) => {
   const [selectedShape, setSelectedShape] = useState(null);
 
   useEffect(() => {
+    const mountNode = mountRef.current;
+
     // Set up scene, camera, and renderer
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf0f0f0); // Light gray background
@@ -17,7 +19,7 @@ const Canvas = ({ shapes, onClose }) => {
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     rendererRef.current = renderer;
     renderer.setSize(window.innerWidth, window.innerHeight - 60); // Adjust for banner height
-    mountRef.current.appendChild(renderer.domElement);
+    mountNode.appendChild(renderer.domElement);
 
     // Add orbit controls
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -146,14 +148,14 @@ const Canvas = ({ shapes, onClose }) => {
     return () => {
       renderer.domElement.removeEventListener('click', onMouseClick);
       window.removeEventListener('resize', handleResize);
-      if (mountRef.current && rendererRef.current) {
-        mountRef.current.removeChild(rendererRef.current.domElement);
+      if (mountNode && renderer.domElement) {
+        mountNode.removeChild(renderer.domElement);
       }
       if (sceneRef.current) {
         sceneRef.current.clear();
       }
-      if (rendererRef.current) {
-        rendererRef.current.dispose();
+      if (renderer) {
+        renderer.dispose();
       }
     };
   }, [shapes]);
