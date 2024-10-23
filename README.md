@@ -79,9 +79,3 @@ After building the app, you can deploy it to a static hosting service. Here are 
 - The application uses local storage to persist shape data between sessions.
 - The 3D rendering is handled by Three.js, which may have performance implications on lower-end devices.
 - The UI is responsive, but for the best experience with the 3D canvas, a larger screen is recommended.
-- Future improvements could include:
-  - Adding more complex shape types
-  - Implementing ability to save, new shape size and position, after user interactions
-  - Adding dark mode toggle
-  - Adding the ability to export/import shape data
-  - Optimizing 3D rendering for better performance on mobile devices
