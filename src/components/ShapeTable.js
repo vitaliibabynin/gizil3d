@@ -52,17 +52,30 @@ const ShapeTable = () => {
   const theme = useTheme();
   const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('md'));
 
+  /**
+   * Effect hook to load shapes from local storage when the component mounts.
+   * This ensures that the table is populated with previously saved shapes.
+   */
   useEffect(() => {
-    // Load shapes from local storage when component mounts
     setShapes(getShapes());
   }, []);
 
+  /**
+   * Handles the creation of a new shape.
+   * This function adds the new shape to the state and saves it to local storage.
+   * @param {Object} newShape - The new shape object to be added.
+   */
   const handleCreateShape = (newShape) => {
     const updatedShapes = [...shapes, { ...newShape, id: Date.now() }];
     setShapes(updatedShapes);
     saveShapes(updatedShapes);
   };
 
+  /**
+   * Handles the deletion of a shape.
+   * This function removes the shape from the state and local storage.
+   * @param {number} id - The ID of the shape to be deleted.
+   */
   const handleDeleteShape = (id) => {
     const updatedShapes = shapes.filter(shape => shape.id !== id);
     setShapes(updatedShapes);
@@ -70,26 +83,49 @@ const ShapeTable = () => {
     if (selectedRow === id) setSelectedRow(null);
   };
 
+  /**
+   * Handles rendering all shapes in the 3D canvas.
+   * This function sets up the canvas to display all shapes.
+   */
   const handleRenderAll = () => {
     setSelectedShapeId(null);
     setShowCanvas(true);
   };
 
+  /**
+   * Handles rendering a specific shape in the 3D canvas.
+   * This function sets up the canvas to display a single shape.
+   * @param {number} id - The ID of the shape to be rendered.
+   */
   const handleRenderShape = (id) => {
     setSelectedShapeId(id);
     setShowCanvas(true);
   };
 
+  /**
+   * Handles closing the 3D canvas.
+   * This function resets the canvas state and returns to the table view.
+   */
   const handleCloseCanvas = () => {
     setShowCanvas(false);
     setSelectedShapeId(null);
   };
 
+  /**
+   * Toggles the expansion of a row in the mobile view.
+   * This function controls which row is currently expanded in the mobile table.
+   * @param {number} id - The ID of the row to be toggled.
+   */
   const toggleRow = (id) => {
     setSelectedRow(prevSelected => prevSelected === id ? null : id);
   };
 
-  // Refactor the repeated button logic in the mobile and desktop views
+  /**
+   * Renders a button with consistent styling for both mobile and desktop views.
+   * This component is used to create uniform buttons throughout the table.
+   * @param {Object} props - The props for the button, including onClick and children.
+   * @returns {JSX.Element} A styled button component.
+   */
   const RenderButton = ({ onClick, children }) => (
     <Button 
       variant="outlined" 
@@ -101,6 +137,12 @@ const ShapeTable = () => {
     </Button>
   );
 
+  /**
+   * Renders a delete button with consistent styling for both mobile and desktop views.
+   * This component is used to create uniform delete buttons throughout the table.
+   * @param {Object} props - The props for the button, including onClick and children.
+   * @returns {JSX.Element} A styled delete button component.
+   */
   const DeleteButton = ({ onClick, children }) => (
     <Button 
       variant="outlined" 
@@ -112,6 +154,11 @@ const ShapeTable = () => {
     </Button>
   );
 
+  /**
+   * Renders the mobile version of the shape table.
+   * This function creates a collapsible table layout optimized for mobile devices.
+   * @returns {JSX.Element} The mobile table component.
+   */
   const renderMobileTable = () => (
     <TableContainer component={Paper} className="rounded-none">
       <Table>
@@ -183,6 +230,11 @@ const ShapeTable = () => {
     </TableContainer>
   );
 
+  /**
+   * Renders the desktop version of the shape table.
+   * This function creates a full table layout optimized for larger screens.
+   * @returns {JSX.Element} The desktop table component.
+   */
   const renderDesktopTable = () => (
     <TableContainer component={Paper}>
       <Table>

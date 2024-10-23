@@ -21,15 +21,27 @@ const ShapeModal = ({ open, onClose, onCreateShape }) => {
   const [errors, setErrors] = useState({ name: '', type: '' });
   const nameInputRef = useRef(null);
 
+  /**
+   * Resets the form data and errors to their initial state.
+   * This function is used to clear the form when the modal is opened or closed.
+   */
   const resetForm = useCallback(() => {
     setFormData({ name: '', type: '' });
     setErrors({ name: '', type: '' });
   }, []);
 
+  /**
+   * Focuses the name input field when the modal opens.
+   * This function improves user experience by automatically placing the cursor in the name field.
+   */
   const focusNameInput = useCallback(() => {
     setTimeout(() => nameInputRef.current?.focus(), 0);
   }, []);
 
+  /**
+   * Effect hook to reset the form and focus the name input when the modal opens.
+   * This ensures that the form is in a clean state each time the user opens the modal.
+   */
   useEffect(() => {
     if (open) {
       resetForm();
@@ -37,6 +49,11 @@ const ShapeModal = ({ open, onClose, onCreateShape }) => {
     }
   }, [open, resetForm, focusNameInput]);
 
+  /**
+   * Handles changes to the input fields.
+   * This function updates the form data state when the user types in the name or selects a shape type.
+   * @param {Event} e - The input change event.
+   */
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -45,6 +62,11 @@ const ShapeModal = ({ open, onClose, onCreateShape }) => {
     }));
   }, []);
 
+  /**
+   * Validates the form data.
+   * This function checks if the name and shape type fields are filled out correctly.
+   * @returns {boolean} True if the form is valid, false otherwise.
+   */
   const validateForm = useCallback(() => {
     const newErrors = {
       name: formData.name.trim() ? '' : 'Name is required',
@@ -54,6 +76,11 @@ const ShapeModal = ({ open, onClose, onCreateShape }) => {
     return !Object.values(newErrors).some(error => error);
   }, [formData]);
 
+  /**
+   * Handles the form submission.
+   * This function validates the form and calls the onCreateShape prop if the form is valid.
+   * @param {Event} e - The form submit event.
+   */
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
     if (validateForm()) {
