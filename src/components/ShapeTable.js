@@ -89,6 +89,29 @@ const ShapeTable = () => {
     setSelectedRow(prevSelected => prevSelected === id ? null : id);
   };
 
+  // Refactor the repeated button logic in the mobile and desktop views
+  const RenderButton = ({ onClick, children }) => (
+    <Button 
+      variant="outlined" 
+      color="primary" 
+      onClick={onClick}
+      fullWidth={isMobileOrTablet}
+    >
+      {children}
+    </Button>
+  );
+
+  const DeleteButton = ({ onClick, children }) => (
+    <Button 
+      variant="outlined" 
+      color="error" 
+      onClick={onClick}
+      fullWidth={isMobileOrTablet}
+    >
+      {children}
+    </Button>
+  );
+
   return (
     <div className={`${isMobileOrTablet ? 'p-0' : 'p-4'} flex justify-center`}>
       {showCanvas ? (
@@ -145,26 +168,8 @@ const ShapeTable = () => {
                       {!isMobileOrTablet && (
                         <TableCell>
                           <div className="flex space-x-2">
-                            <Button 
-                              variant="outlined" 
-                              color="error" 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteShape(shape.id);
-                              }}
-                            >
-                              Delete
-                            </Button>
-                            <Button 
-                              variant="outlined" 
-                              color="primary" 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleRenderShape(shape.id);
-                              }}
-                            >
-                              Render
-                            </Button>
+                            <DeleteButton onClick={() => handleDeleteShape(shape.id)}>Delete</DeleteButton>
+                            <RenderButton onClick={() => handleRenderShape(shape.id)}>Render</RenderButton>
                           </div>
                         </TableCell>
                       )}
@@ -188,22 +193,8 @@ const ShapeTable = () => {
                                     <TableCell component="th" scope="row">Actions:</TableCell>
                                     <TableCell>
                                       <div className="flex flex-col space-y-2">
-                                        <Button 
-                                          variant="outlined" 
-                                          color="error" 
-                                          onClick={() => handleDeleteShape(shape.id)}
-                                          fullWidth
-                                        >
-                                          Delete
-                                        </Button>
-                                        <Button 
-                                          variant="outlined" 
-                                          color="primary" 
-                                          onClick={() => handleRenderShape(shape.id)}
-                                          fullWidth
-                                        >
-                                          Render
-                                        </Button>
+                                        <DeleteButton onClick={() => handleDeleteShape(shape.id)}>Delete</DeleteButton>
+                                        <RenderButton onClick={() => handleRenderShape(shape.id)}>Render</RenderButton>
                                       </div>
                                     </TableCell>
                                   </TableRow>

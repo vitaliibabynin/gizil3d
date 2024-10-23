@@ -1,12 +1,21 @@
 const SHAPES_STORAGE_KEY = 'shapes';
 
 export const saveShapes = (shapes) => {
-  localStorage.setItem(SHAPES_STORAGE_KEY, JSON.stringify(shapes));
+  try {
+    localStorage.setItem(SHAPES_STORAGE_KEY, JSON.stringify(shapes));
+  } catch (error) {
+    console.error('Error saving shapes to localStorage:', error);
+  }
 };
 
 export const getShapes = () => {
-  const shapes = localStorage.getItem(SHAPES_STORAGE_KEY);
-  return shapes ? JSON.parse(shapes) : [];
+  try {
+    const shapes = localStorage.getItem(SHAPES_STORAGE_KEY);
+    return shapes ? JSON.parse(shapes) : [];
+  } catch (error) {
+    console.error('Error retrieving shapes from localStorage:', error);
+    return [];
+  }
 };
 
 export const addShape = (shape) => {

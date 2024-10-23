@@ -16,23 +16,28 @@ const Canvas = ({ shapes, onClose }) => {
   const raycasterRef = useRef(new THREE.Raycaster());
   const mouseRef = useRef(new THREE.Vector2());
 
+  // Initialize Three.js scene, camera, and renderer
   const initializeScene = useCallback((mountNode) => {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf0f0f0);
     sceneRef.current = scene;
 
+    // Set up perspective camera
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 5, 10);
     camera.lookAt(0, 0, 0);
 
+    // Create WebGL renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     rendererRef.current = renderer;
     renderer.setSize(window.innerWidth, window.innerHeight - 120);
     mountNode.appendChild(renderer.domElement);
 
+    // Add orbit controls for camera manipulation
     const orbitControls = new OrbitControls(camera, renderer.domElement);
     orbitControlsRef.current = orbitControls;
 
+    // Set up lighting for the scene
     setupLighting(scene);
 
     return { scene, camera, renderer, orbitControls };
@@ -82,13 +87,17 @@ const Canvas = ({ shapes, onClose }) => {
     return createCleanupFunction(mountNode, renderer, scene, dragControls, handleResize);
   }, [shapes, initializeScene, createShapes]);
 
+  // Helper function to set up scene lighting
   const setupLighting = (scene) => {
+    // Add ambient light for overall scene illumination
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambientLight);
 
+    // Add hemisphere light for sky and ground colors
     const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
     scene.add(hemisphereLight);
 
+    // Add directional light for shadows and highlights
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
     directionalLight.position.set(5, 10, 7);
     scene.add(directionalLight);
