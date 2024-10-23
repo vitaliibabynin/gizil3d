@@ -112,8 +112,12 @@ const ShapeModal = ({ open, onClose, onCreateShape }) => {
             onChange={handleInputChange}
             error={!!errors.name}
             helperText={errors.name || `${formData.name.length}/${MAX_NAME_LENGTH} characters`}
-            inputProps={{ maxLength: MAX_NAME_LENGTH }}
             inputRef={nameInputRef}
+            slotProps={{
+              input: {
+                maxLength: MAX_NAME_LENGTH
+              }
+            }}
           />
           {/* Shape type selection dropdown */}
           <FormControl fullWidth margin="dense" error={!!errors.type}>
